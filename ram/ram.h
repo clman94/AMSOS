@@ -29,15 +29,14 @@ struct ram_file_entry
 	uint8_t  name_length;
 	char  name[RAM_FILE_NAME_LENGTH];
 	
-	union{
+	//union{
 		
-		// Region in which data is stored
-		// (start=0, end=1)
-		// Range is inclusive
-		mem_addr range[2];
+	// Region in which data is stored
+	// (start=0, end=1)
+	// Range is inclusive
+	mem_addr range[2];
 		
-		void* address;
-	};
+	//};
 	uint8_t  type;
 };
 

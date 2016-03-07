@@ -3,7 +3,8 @@
 #include "term.h"
 
 extern "C"
-void kern_begin(){
+void kern_begin()
+{
 	term_clear();
 	
 }

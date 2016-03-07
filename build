@@ -14,7 +14,10 @@ $CPPCOMPILE ./ram/fs.cpp -o ./bin/fs.o
 echo --Library--
 $CPPCOMPILE ./library/string.c -o ./bin/string.o
 
-
+echo --System--
+$CPPCOMPILE ./system/ports.cpp -o ./bin/ports.o
+$CPPCOMPILE ./system/pic.cpp -o ./bin/pic.o
+$NASMCOMPILE ./interrupts/interrupts.asm -o ./bin/interrupts.o
 
 echo --System Terminal Display--
 
@@ -23,9 +26,9 @@ $NASMCOMPILE ./system/boot.asm -o ./bin/boot.o
 
 echo
 echo Linking
-echo cd ./bin
-echo gcc -m32 -T ../link.ld -o ../isodir/boot/myos.bin -ffreestanding -O2 -nostdlib $LINKORDER -lgcc
-echo cd ..
+cd ./bin
+gcc -m32 -T ../link.ld -o ../isodir/boot/myos.bin -ffreestanding -O2 -nostdlib $LINKORDER -lgcc
+cd ..
 
 echo #Packaging#
-echo grub-mkrescue -o myos.iso isodir
+grub-mkrescue -o myos.iso isodir

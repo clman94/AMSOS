@@ -67,4 +67,4 @@ mboot:
 	dd code
 	dd bss
 	dd end
-	dd start
+	dd _start
