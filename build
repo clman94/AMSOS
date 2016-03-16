@@ -2,7 +2,7 @@
 CPPCOMPILE="g++ -std=c++11 -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c"
 NASMCOMPILE="nasm -felf32"
 
-LINKORDER="boot.o gdtasm.o gdt.o term.o begin.o"
+LINKORDER="boot.o terminal.o string.o fs.o pic.o error_handler.o IRQ_handler.o interrupts.o idt.o begin.o"
 
 echo Compiling
 echo --Kernel--
@@ -16,10 +16,14 @@ $CPPCOMPILE ./library/string.c -o ./bin/string.o
 
 echo --System--
 $CPPCOMPILE ./system/ports.cpp -o ./bin/ports.o
-$CPPCOMPILE ./system/pic.cpp -o ./bin/pic.o
+$CPPCOMPILE ./interrupts/error_handler.cpp -o ./bin/error_handler.o
+$CPPCOMPILE ./interrupts/IRQ_handler.cpp -o ./bin/IRQ_handler.o
+$CPPCOMPILE ./interrupts/pic.cpp -o ./bin/pic.o
+$CPPCOMPILE ./interrupts/idt.cpp -o ./bin/idt.o
 $NASMCOMPILE ./interrupts/interrupts.asm -o ./bin/interrupts.o
 
-echo --System Terminal Display--
+echo --Display--
+$CPPCOMPILE ./display/terminal.cpp -o ./bin/terminal.o
 
 echo --Main Loader--
 $NASMCOMPILE ./system/boot.asm -o ./bin/boot.o

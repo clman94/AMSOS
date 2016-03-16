@@ -9,7 +9,6 @@ unsigned char 		term_color = 0x07;
 unsigned char* 		term_buffer = (unsigned char*)0xb8000;
 
 // Set a specific cahracter
-extern
 void term_set(int x,int y, char c){
 	int loc = (x + (y*term_width))*2;
 	term_buffer[loc] = c;
@@ -17,7 +16,6 @@ void term_set(int x,int y, char c){
 }
 
 // Clears Terminal
-extern
 void term_clear()
 {
 	// Set all characters to spaces
@@ -33,7 +31,6 @@ void term_clear()
 }
 
 // Prints a character
-extern
 void term_printc(char c)
 {
 	if(c == '\n'){ // New line
@@ -54,7 +51,6 @@ void term_printc(char c)
 }
 
 // Prints a string
-extern
 void term_prints(const char* s){
 	
 	int i = 0;
@@ -65,7 +61,6 @@ void term_prints(const char* s){
 }
 
 // Prints a string with a temperary color
-extern
 void term_prints(const char* s, unsigned char color){
 	unsigned int tmpcolor = term_color;
 	term_color = color;

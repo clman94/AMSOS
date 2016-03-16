@@ -28,8 +28,7 @@ _start:
 	
 	; This begins the main kernel (software stuff)
 	;call kern_main
-	
-	cli
+	;cli
 hang:
 	hlt
 	jmp hang

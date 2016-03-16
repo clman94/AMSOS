@@ -8,14 +8,14 @@ struct REG_x86_general{
 };
 
 struct REG_x86_interrupt{
-	REG_x86_segment segment;
-	REG_x86_gen general;
+	//REG_x86_segment segment;
+	REG_x86_general general;
 	unsigned int eip, cs, eflags, useresp, ss;
 };
 
 struct REG_x86_error{
-	unsigned int code;
-	REG_x86_segment segment;
-	REG_x86_gen general;
+	unsigned int no, code;
+	//REG_x86_segment segment;
+	REG_x86_general general;
 	unsigned int eip, cs, eflags, useresp, ss;
 };

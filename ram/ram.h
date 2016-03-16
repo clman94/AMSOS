@@ -48,4 +48,10 @@ struct ram_directory
 	ram_file_entry block[RAM_FS_BLOCK_LENGTH];
 };
 
+ram_directory*  clear_directory_block(ram_directory* dir);
+ram_directory*  create_root_directory(mem_addr address, mem_addr start, mem_addr end);
+mem_addr        get_file_size(ram_file_entry* file);
+ram_file_entry* create_file(ram_directory* dir, char* name, mem_addr size, int type);
+ram_file_entry* make_file(ram_directory* dir, char* name, mem_addr start, mem_addr end, int type);
+ram_directory*  create_directory(ram_directory* dir, char* name);
 #endif

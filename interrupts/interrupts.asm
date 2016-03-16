@@ -11,7 +11,15 @@ extern error_handler
 		push es
 		push fs
 		push gs
+		
+		%if i == 8
+		 push byte 0
+		%elif i >= 10 && i <=14
+		 push byte 0
+		%endif
+		
 		push i
+		
 		cld
 		call error_handler
 		pop eax
@@ -24,44 +32,36 @@ extern error_handler
 		
 	%assign i i+1
 	%if i==15
-		%assign i i+1
+	 %assign i i+1
 	%endif
 
 %endrep
 
-extern timer_handler
-global int32
-int32:
-	pusha
-	push ds
-	push es
-	push fs
-	push gs
-	mov eax, esp
-	push eax
-	cld
-	call timer_handler
-	pop eax
-	pop gs
-	pop fs
-	pop es
-	pop ds
-	popa
-	iret
+extern IRQ_handler
 
-extern keyboard_handler
-global int33
-int33:
-	pusha
-	push ds
-	push es
-	push fs
-	push gs
-	cld
-	call keyboard_handler
-	pop gs
-	pop fs
-	pop es
-	pop ds
-	popa
-	iret
+%assign i 32
+%rep 14
+
+	global int%[i]
+	int%[i]:
+		pusha
+		push ds
+		push es
+		push fs
+		push gs
+		mov eax, esp
+		push eax
+		push i
+		cld
+		call IRQ_handler
+		pop eax
+		pop eax
+		pop gs
+		pop fs
+		pop es
+		pop ds
+		popa
+		iret
+	
+	%assign i i+1
+%endrep
