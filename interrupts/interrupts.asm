@@ -22,6 +22,7 @@ extern error_handler
 		
 		cld
 		call error_handler
+		add esp, 4
 		pop eax
 		pop gs
 		pop fs
@@ -54,7 +55,7 @@ extern IRQ_handler
 		push i
 		cld
 		call IRQ_handler
-		pop eax
+		add esp, 4
 		pop eax
 		pop gs
 		pop fs

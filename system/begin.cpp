@@ -10,22 +10,22 @@
 void register_exceptions()
 {
 	IDT_register(0, (void(*)())int1, 0);
-	IDT_register(0, (void(*)())int2, 0);
-	IDT_register(0, (void(*)())int3, 0);
-	IDT_register(0, (void(*)())int4, 0);
-	IDT_register(0, (void(*)())int5, 0);
-	IDT_register(0, (void(*)())int6, 0);
-	IDT_register(0, (void(*)())int7, 0);
-	IDT_register(0, (void(*)())int8, 0);
-	IDT_register(0, (void(*)())int9, 0);
-	IDT_register(0, (void(*)())int10, 0);
-	IDT_register(0, (void(*)())int11, 0);
-	IDT_register(0, (void(*)())int12, 0);
-	IDT_register(0, (void(*)())int13, 0);
-	IDT_register(0, (void(*)())int14, 0);
-	IDT_register(0, (void(*)())int16, 0);
-	IDT_register(0, (void(*)())int17, 0);
-	IDT_register(0, (void(*)())int18, 0);
+	IDT_register(1, (void(*)())int2, 0);
+	IDT_register(2, (void(*)())int3, 0);
+	IDT_register(3, (void(*)())int4, 0);
+	IDT_register(4, (void(*)())int5, 0);
+	IDT_register(5, (void(*)())int6, 0);
+	IDT_register(6, (void(*)())int7, 0);
+	IDT_register(7, (void(*)())int8, 0);
+	IDT_register(8, (void(*)())int9, 0);
+	IDT_register(9, (void(*)())int10, 0);
+	IDT_register(10, (void(*)())int11, 0);
+	IDT_register(11, (void(*)())int12, 0);
+	IDT_register(12, (void(*)())int13, 0);
+	IDT_register(13, (void(*)())int14, 0);
+	IDT_register(14, (void(*)())int16, 0);
+	IDT_register(17, (void(*)())int17, 0);
+	IDT_register(18, (void(*)())int18, 0);
 }
 
 void register_irq()
@@ -57,7 +57,7 @@ void kern_setup()
 	
 	register_exceptions();
 	
-	timer_phase(100);
+	//timer_phase(100);
 	
 	IDTR_load();
 	
