@@ -14,7 +14,7 @@ void term_set_position(uint32_t x, uint32_t y){
 	term_y = y;
 }
 
-// Set a specific cahracter
+// Set a specific character
 void term_set(uint32_t x,uint32_t y, char c){
 	uint32_t loc = (x + (y*term_width))*2;
 	term_buffer[loc] = c;

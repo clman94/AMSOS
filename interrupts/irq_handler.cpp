@@ -22,7 +22,7 @@ void IRQ_handler(uint32_t irq, REG_x86_interrupt* regs)
 		routine(regs);
 	}
 	
-	//term_prints("I");
+	term_prints("I");
 	
 	PIC_sendEOI(irq - 32);
 }

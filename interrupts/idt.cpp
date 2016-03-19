@@ -23,7 +23,7 @@ void IDTR_load()
 	IDTR.base = IDT;
 
 	// load IDTR
-	asm volatile("lidt (%0)": :"m"(IDTR));
+	__asm__ __volatile__("lidt (%0)": :"m"(IDTR));
 }
 
 
@@ -34,7 +34,7 @@ void IDT_register(int index, void (*handler)(), int dpl)
 	unsigned char settings = 0;
 	unsigned int offset = (unsigned int)handler;
 	
-	asm volatile("movw %%cs,%0" :"=g"(selector));
+	__asm__ __volatile__("movw %%cs,%0" :"=g"(selector));
 	
 	switch(dpl){
 		case 0: settings = 0x8E; break;
@@ -55,10 +55,10 @@ void enable_int(bool on)
 {
 	if(on)
 	{
-		asm volatile("sti");
+		__asm__ __volatile__("sti");
 	}
 	else
 	{
-		asm volatile("cli");
+		__asm__ __volatile__("cli");
 	}
 }

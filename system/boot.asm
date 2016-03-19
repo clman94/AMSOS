@@ -8,7 +8,7 @@
 BITS 32
 global _start
 extern kern_setup
-;extern kern_main
+extern kern_main
 
 _start:
 	
@@ -27,8 +27,8 @@ _start:
 	sti
 	
 	; This begins the main kernel (software stuff)
-	;call kern_main
-	;cli
+	call kern_main
+	cli
 hang:
 	hlt
 	jmp hang
