@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include "../system/ports.h"
 
-#include "keyboard.h"
+#include <include/ports.h>
+#include <include/keyboard.h>
 
 #define PS2_READWRITE 0x60
 
@@ -32,6 +32,7 @@ const unsigned char scancode_set[] =
 	"\0\0\0\0" // none
 	"\0\0" // F11-12
 	;
+
 bool record_status = false;
 bool key_status[PRESSED_END] = { false, };
 
@@ -103,13 +104,12 @@ bool keyboard_key_status(uint8_t scan)
 }
 
 void update_status(uint8_t scan){
-	if (scan >= PRESSED_BEGIN &&
-		scan <= PRESSED_END)
+	if (scan <= PRESSED_END)
 		   key_status[scan] = true;
 		   
 	if (scan >= RELEASE_BEGIN &&
 		scan <= RELEASE_END)
-		   key_status[scan] = false;
+		   key_status[scan - RELEASE_BEGIN] = false;
 }
 
 void irqh_keyboard_controller()

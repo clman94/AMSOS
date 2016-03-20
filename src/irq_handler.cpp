@@ -1,8 +1,6 @@
-#include "pic.h"
-
-
-#include "../display/terminal.h"
-#include "isr.h"
+#include <include/pic.h>
+#include <include/terminal.h>
+#include <include/isr.h>
 
 
 

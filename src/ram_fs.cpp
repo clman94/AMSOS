@@ -1,6 +1,6 @@
 
-#include "ram.h"
-#include "../library/string.h"
+#include <include/ram.h>
+#include <include/string.h"
 
 ram_directory* clear_directory_block(ram_directory* dir)
 {

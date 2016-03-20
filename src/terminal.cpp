@@ -1,5 +1,5 @@
 
-#include "terminal.h"
+#include <include/terminal.h>
 
 const int term_width = 80;
 const int term_height = 25;

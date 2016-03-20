@@ -1,20 +1,57 @@
+// This header is intended for use in begin.cpp only
 
-#include "../display/terminal.h"
-
-#include "../interrupts/interrupts.h"
-#include "../interrupts/pic.h"
-#include "../interrupts/idt.h"
-#include "../interrupts/isr.h"
-#include "../drivers/keyboard.h"
-
-#include "ports.h"
-
-void register_isr()
-{
-	ISR_register(1, (isr_t)irqh_keyboard_controller);
+extern "C" {
+void int0();
+void int1();
+void int2();
+void int3();
+void int4();
+void int5();
+void int6();
+void int7();
+void int8();
+void int9();
+void int10();
+void int11();
+void int12();
+void int13();
+void int14();
+void int16();
+void int17();
+void int18();
+void int19();
+void int20();
+void int21();
+void int22();
+void int23();
+void int24();
+void int25();
+void int26();
+void int27();
+void int28();
+void int29();
+void int30();
+void int31();
+void int32();
+void int33();
+void int34();
+void int35();
+void int36();
+void int37();
+void int38();
+void int39();
+void int40();
+void int41();
+void int42();
+void int43();
+void int44();
+void int45();
+void int46();
+void int47();
 }
 
-void register_exceptions()
+inline
+void interrupts_register_exceptions()
 {
 	IDT_register(0,  &int0, 0);
 	IDT_register(1,  &int1, 0);
@@ -49,7 +86,8 @@ void register_exceptions()
 	IDT_register(31, &int31, 0);
 }
 
-void register_irq()
+inline
+void interrupts_register_irq()
 {
 	IDT_register(32, &int32, 0);
 	IDT_register(33, &int33, 0);
@@ -68,53 +106,3 @@ void register_irq()
 	IDT_register(46, &int46, 0);
 	IDT_register(47, &int47, 0);
 }
-
-void timer_phase(int hz){
-    int divisor = 1193180 / hz;
-    port_out_b(0x43, 0x36);
-    port_out_b(0x40, divisor & 0xFF);
-    port_out_b(0x40, divisor >> 8);
-}
-
-extern "C"
-void kern_setup()
-{
-	term_clear();
-	
-	term_prints("Remap PIC...");
-	
-	PIC_remap(PIC1_OFFSET, PIC2_OFFSET);
-	
-	term_prints("Complete\n");
-	term_prints("Register Interrupts...");
-	
-	IRQ_disable_all();
-	
-	register_exceptions();
-	register_irq();
-	register_isr();
-	
-	IDTR_load();
-	
-	IRQ_enable(IRQ_TIMER);
-	IRQ_enable(IRQ_CONTROLLER_KEYBOARD);
-
-	timer_phase(200);
-	
-	term_prints("Complete\n");
-}
-
-extern "C"
-void kern_main(){
-	keyboard_enable_buffer();
-	keyboard_enable_direct();
-	
-	while(true){
-		uint8_t key = keyboard_get_ascii(true);
-		if(key != 0){
-			bool shift = keyboard_key_status(SCANCODE_LSHIFT);
-			term_printc(shift ? (key - 'a' + 'A') : key);
-		}
-	}
-}
-

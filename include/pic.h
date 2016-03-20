@@ -31,6 +31,8 @@ void IRQ_mask_all();
 void IRQ_unmask_all();
 void IRQ_unmask(uint8_t irq);
 
+// TO THINK ABOUT: Should the above be renamed to the below? seems cleaner...
+
 static inline void IRQ_disable_all()
 {
 	IRQ_mask_all();

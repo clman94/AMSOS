@@ -1,28 +1,42 @@
-Script started on Sun 28 Feb 2016 04:15:09 PM PST
-user1@ubuntu:~/os/Attempt4$ exit./build
+Script started on Sat 19 Mar 2016 06:50:52 PM PDT
+^[[A^[[Auser1@ubuntu:~/os/Attempt4$ exit./build
 Compiling
 --Kernel--
-./system/begin.cpp:2:24: fatal error: memory/gdt.h: No such file or directory
- #include "memory/gdt.h"
-                        ^
-compilation terminated.
 --Memory Manager--
 ./ram/fs.cpp: In function ‘ram_directory* create_root_directory(mem_addr, mem_addr, mem_addr)’:
-./ram/fs.cpp:26:46: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+./ram/fs.cpp:25:46: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
   strncpy((char*)dir->block[0].name, "free", 4);
                                               ^
 --Library--
---System Terminal Display--
---Main Loader--
-./system/boot.asm:70: error: symbol `start' undefined
+--Drivers--
+--System--
+./interrupts/error_handler.cpp:42:6: warning: unused parameter ‘no’ [-Wunused-parameter]
+ void error_handler(uint32_t irq, uint32_t no, REG_x86_interrupt* regs)
+      ^
+./interrupts/error_handler.cpp:42:6: warning: unused parameter ‘regs’ [-Wunused-parameter]
+--Display--
+^[[A--Main Loader--
 
 Linking
-cd ./bin
-gcc -m32 -T ../link.ld -o ../isodir/boot/myos.bin -ffreestanding -O2 -nostdlib boot.o gdtasm.o gdt.o term.o begin.o -lgcc
-cd ..
+^[[A
+xorriso 1.3.2 : RockRidge filesystem manipulator, libburnia project.
 
-grub-mkrescue -o myos.iso isodir
+Drive current: -outdev 'stdio:myos.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  408g free
+Added to ISO image: directory '/'='/tmp/grub.Z4ZizH'
+xorriso : UPDATE : 280 files added in 1 seconds
+Added to ISO image: directory '/'='/home/user1/os/Attempt4/isodir'
+xorriso : UPDATE : 284 files added in 1 seconds
+xorriso : NOTE : Copying to System Area: 512 bytes from file '/usr/lib/grub/i386-pc/boot_hybrid.img'
+xorriso : UPDATE : Thank you for being patient. Working since 0 seconds.
+
+ISO image produced: 2473 sectors
+Written to medium : 2473 sectors at LBA 0
+Writing to 'stdio:myos.iso' completed successfully.
+
 user1@ubuntu:~/os/Attempt4$ ./build[3Pexit
 exit
 
-Script done on Sun 28 Feb 2016 04:15:12 PM PST
+Script done on Sat 19 Mar 2016 06:50:55 PM PDT

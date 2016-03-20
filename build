@@ -1,35 +1,32 @@
 
-CPPCOMPILE="g++ -std=c++11 -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c"
+CPPCOMPILE="g++ -std=c++11 -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c -I../"
 NASMCOMPILE="nasm -felf32"
 
 LINKORDER="boot.o terminal.o string.o fs.o pic.o error_handler.o IRQ_handler.o interrupts.o idt.o keyboard.o begin.o"
 
 echo Compiling
 echo --Kernel--
-$CPPCOMPILE ./system/begin.cpp -o ./bin/begin.o
+$CPPCOMPILE ./src/begin.cpp -o ./bin/begin.o
 
 echo --Memory Manager--
-$CPPCOMPILE ./ram/fs.cpp -o ./bin/fs.o
-
-echo --Library--
-$CPPCOMPILE ./library/string.c -o ./bin/string.o
+$CPPCOMPILE ./src/ram_fs.cpp -o ./bin/ram_fs.o
 
 echo --Drivers--
-$CPPCOMPILE ./drivers/keyboard.cpp -o ./bin/keyboard.o
+$CPPCOMPILE ./src/drivers/keyboard.cpp -o ./bin/keyboard.o
 
 echo --System--
-$CPPCOMPILE ./system/ports.cpp -o ./bin/ports.o
-$CPPCOMPILE ./interrupts/error_handler.cpp -o ./bin/error_handler.o
-$CPPCOMPILE ./interrupts/IRQ_handler.cpp -o ./bin/IRQ_handler.o
-$CPPCOMPILE ./interrupts/pic.cpp -o ./bin/pic.o
-$CPPCOMPILE ./interrupts/idt.cpp -o ./bin/idt.o
-$NASMCOMPILE ./interrupts/interrupts.asm -o ./bin/interrupts.o
+$CPPCOMPILE ./src/ports.cpp -o ./bin/ports.o
+$CPPCOMPILE ./src/error_handler.cpp -o ./bin/error_handler.o
+$CPPCOMPILE ./src/IRQ_handler.cpp -o ./bin/IRQ_handler.o
+$CPPCOMPILE ./src/pic.cpp -o ./bin/pic.o
+$CPPCOMPILE ./src/idt.cpp -o ./bin/idt.o
+$NASMCOMPILE ./asm/interrupts.asm -o ./bin/interrupts.o
 
 echo --Display--
-$CPPCOMPILE ./display/terminal.cpp -o ./bin/terminal.o
+$CPPCOMPILE ./src/terminal.cpp -o ./bin/terminal.o
 
 echo --Main Loader--
-$NASMCOMPILE ./system/boot.asm -o ./bin/boot.o
+$NASMCOMPILE ./asm/boot.asm -o ./bin/boot.o
 
 echo
 echo Linking

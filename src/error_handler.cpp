@@ -1,6 +1,7 @@
 #include <stdint.h>
-#include "registers.h"
-#include "../display/terminal.h"
+
+#include <include/registers.h>
+#include <include/terminal.h>
 
 const char* error_messages[] = 
 {

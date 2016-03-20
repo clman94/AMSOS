@@ -1,5 +1,10 @@
-#include "string.h"
+#ifndef LIBRARY_STRING_H
+#define LIBRARY_STRING_H
 
+#include <stdint.h>
+#include <stddef.h>
+
+static inline
 void* memset(void* ptr, char value, size_t num){
 	for(size_t i = 0; i < num; i++){
 		*((char*)ptr + i) = value;
@@ -7,6 +12,7 @@ void* memset(void* ptr, char value, size_t num){
 	return ptr;
 }
 
+static inline
 size_t strlen(char* s)
 {
 	size_t i = 0;
@@ -18,6 +24,7 @@ size_t strlen(char* s)
 }
 
 
+static inline
 char* strset(char* s, char c){
 	int l = strlen(s);
 	
@@ -28,6 +35,7 @@ char* strset(char* s, char c){
 	return s;
 }
 
+static inline 
 char* strcpy(char* s1, char* s2)
 {
 	size_t l  = 0;
@@ -41,6 +49,7 @@ char* strcpy(char* s1, char* s2)
 	return s1;
 }
 
+static inline
 char* strncpy(char* s1, char* s2, size_t num)
 {
 	for(size_t i = 0; i < num; i++)
@@ -49,3 +58,5 @@ char* strncpy(char* s1, char* s2, size_t num)
 	}
 	return s1;
 }
+
+#endif
