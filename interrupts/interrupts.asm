@@ -22,8 +22,8 @@ extern error_handler
 		
 		cld
 		call error_handler
-		add esp, 4
-		pop eax
+		add esp, 8 ; pop the irq # and esp pointer
+		
 		pop gs
 		pop fs
 		pop es
@@ -41,7 +41,7 @@ extern error_handler
 extern IRQ_handler
 
 %assign i 32
-%rep 14
+%rep 16
 
 	global int%[i]
 	int%[i]:
@@ -53,10 +53,11 @@ extern IRQ_handler
 		mov eax, esp
 		push eax
 		push i
+		
 		cld
 		call IRQ_handler
-		add esp, 4
-		pop eax
+		
+		add esp, 8 ; pop the irq # and esp pointer
 		pop gs
 		pop fs
 		pop es

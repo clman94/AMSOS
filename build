@@ -2,7 +2,7 @@
 CPPCOMPILE="g++ -std=c++11 -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c"
 NASMCOMPILE="nasm -felf32"
 
-LINKORDER="boot.o terminal.o string.o fs.o pic.o error_handler.o IRQ_handler.o interrupts.o idt.o begin.o"
+LINKORDER="boot.o terminal.o string.o fs.o pic.o error_handler.o IRQ_handler.o interrupts.o idt.o keyboard.o begin.o"
 
 echo Compiling
 echo --Kernel--
@@ -13,6 +13,9 @@ $CPPCOMPILE ./ram/fs.cpp -o ./bin/fs.o
 
 echo --Library--
 $CPPCOMPILE ./library/string.c -o ./bin/string.o
+
+echo --Drivers--
+$CPPCOMPILE ./drivers/keyboard.cpp -o ./bin/keyboard.o
 
 echo --System--
 $CPPCOMPILE ./system/ports.cpp -o ./bin/ports.o
