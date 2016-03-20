@@ -1,5 +1,5 @@
-#include "pic.h"
-#include "../system/ports.h"
+#include <include/pic.h>
+#include <include/ports.h>
 
 #define PIC_EOI		  0x20
 

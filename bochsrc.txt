@@ -1,0 +1,3 @@
+ata0-master: type=disk, path="myos.iso"
+
+boot: disk

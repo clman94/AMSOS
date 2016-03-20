@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #include <include/ports.h>
-#include <include/keyboard.h>
+#include <include/drivers/keyboard.h>
 
 #define PS2_READWRITE 0x60
 

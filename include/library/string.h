@@ -35,6 +35,16 @@ char* strset(char* s, char c){
 	return s;
 }
 
+static inline
+char* strncpy(char* s1, char* s2, size_t num)
+{
+	for(size_t i = 0; i < num; i++)
+	{
+		s1[i] = s2[i];
+	}
+	return s1;
+}
+
 static inline 
 char* strcpy(char* s1, char* s2)
 {
@@ -49,14 +59,5 @@ char* strcpy(char* s1, char* s2)
 	return s1;
 }
 
-static inline
-char* strncpy(char* s1, char* s2, size_t num)
-{
-	for(size_t i = 0; i < num; i++)
-	{
-		s1[i] = s2[i];
-	}
-	return s1;
-}
 
 #endif
