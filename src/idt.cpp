@@ -9,7 +9,8 @@ struct IDT_descriptor
 	uint16_t high_offset;
 }  __attribute__ ((packed));
 
-struct{
+struct
+{
     unsigned short limit;
     IDT_descriptor* base;
 } __attribute__((packed)) IDTR;
@@ -36,7 +37,8 @@ void IDT_register(int index, void (*handler)(), int dpl)
 	
 	__asm__ __volatile__("movw %%cs,%0" :"=g"(selector));
 	
-	switch(dpl){
+	switch(dpl)
+	{
 		case 0: settings = 0x8E; break;
 		case 1:
 		case 2:

@@ -22,7 +22,9 @@ const char* error_messages[] =
 	"Page Fault"
 };
 
-void display_number(unsigned int num)
+
+// TODO FIX
+void display_hex(uint32_t num)
 {
 	char hex[] = "0123456789ABCDEF";
 	char conv[9] = { '0', };
@@ -31,7 +33,7 @@ void display_number(unsigned int num)
 		num /= 16;
 	}
 	
-	char out[11] = {'0', 'x', '0',};
+	char* out = "0x000000000\0";
 	for(int i = 0; i < 9; i++){
 		out[10 - i] = conv[i];
 	}
@@ -39,8 +41,7 @@ void display_number(unsigned int num)
 	term_prints(out);
 }
 
-extern "C"
-void error_handler(uint32_t irq, uint32_t no, REG_x86_interrupt* regs)
+void display_unhandled_exception(uint32_t irq, uint32_t no, REG_x86_interrupt* regs)
 {
 	term_clear();
 	
@@ -52,9 +53,15 @@ void error_handler(uint32_t irq, uint32_t no, REG_x86_interrupt* regs)
 	else         term_prints(error_messages[irq]);
 	
 	term_prints("\nCode  : ");
-	display_number(irq - 32);
+	display_hex(irq - 32);
 	
 	for(;;){
 		asm("hlt");
 	}
+}
+
+extern "C"
+void error_handler(uint32_t irq, uint32_t no, REG_x86_interrupt* regs)
+{
+	display_unhandled_exception(irq, no, regs);
 }

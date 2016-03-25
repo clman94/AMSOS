@@ -1,6 +1,8 @@
 #ifndef H_KEYBOARD
 #define H_KEYBOARD
 
+#include <stdint.h>
+
 enum scancodes{
 	SCANCODE_ESCAPE = 0x01,
 	SCANCODE_ENTER  = 0x1C,

@@ -119,5 +119,6 @@ void irqh_keyboard_controller()
 	if(record_status)
 		update_status(scancode);
 	
-	push_buffer(scancode);
+	if(scan <= PRESSED_END)
+		push_buffer(scancode);
 }
