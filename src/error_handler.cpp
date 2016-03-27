@@ -2,6 +2,7 @@
 
 #include <include/registers.h>
 #include <include/terminal.h>
+#include <include/drivers/keyboard.h>
 
 const char* error_messages[] = 
 {
@@ -22,28 +23,9 @@ const char* error_messages[] =
 	"Page Fault"
 };
 
-
-// TODO FIX
-void display_hex(uint32_t num)
+void display_unhandled_exception(uint32_t irq, REG_x86_error* regs)
 {
-	char hex[] = "0123456789ABCDEF";
-	char conv[9] = { '0', };
-	for(int i = 0; i < 9; i++){
-		conv[i] = hex[(num%16)];
-		num /= 16;
-	}
-	
-	char* out = "0x000000000\0";
-	for(int i = 0; i < 9; i++){
-		out[10 - i] = conv[i];
-	}
-	
-	term_prints(out);
-}
-
-void display_unhandled_exception(uint32_t irq, uint32_t no, REG_x86_interrupt* regs)
-{
-	term_clear();
+	//term_clear();
 	
 	term_prints("    !! PANIC !!    \n");
 	term_prints("UNHANDLED EXCEPTION\n\n");
@@ -52,16 +34,20 @@ void display_unhandled_exception(uint32_t irq, uint32_t no, REG_x86_interrupt* r
 	if(irq > 14) term_prints("Unknown");
 	else         term_prints(error_messages[irq]);
 	
-	term_prints("\nCode  : ");
-	display_hex(irq - 32);
+	term_prints("\nCode  : 0x");
+	term_hex32(irq);
 	
-	for(;;){
+	term_prints("\nEAX:"); term_hex32(regs->general.eax);
+	term_prints("  EBX:"); term_hex32(regs->general.ebx);
+	term_prints("\nECX:"); term_hex32(regs->general.ecx);
+	term_prints("  EDX:"); term_hex32(regs->general.edx);
+	while(true){
 		asm("hlt");
 	}
 }
 
 extern "C"
-void error_handler(uint32_t irq, uint32_t no, REG_x86_interrupt* regs)
+void error_handler(uint32_t irq, REG_x86_error* regs)
 {
-	display_unhandled_exception(irq, no, regs);
+	display_unhandled_exception(irq, regs);
 }

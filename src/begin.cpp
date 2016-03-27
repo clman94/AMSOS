@@ -7,10 +7,13 @@
 #include <include/ports.h>
 #include <include/ramfs.h>
 #include <include/mm.h>
+#include <include/cpu.h>
 
 #include <include/interrupts.h>
 
-void register_isr()
+#define DEBUG(A) term_prints("[KERNEL] "); term_prints(A);
+
+void ISR_register_drivers()
 {
 	ISR_register(1, (isr_t)irqh_keyboard_controller);
 }
@@ -28,46 +31,35 @@ void kern_setup()
 {
 	term_clear();
 	
-	term_prints("Remap PIC...");
+	DEBUG("Remap PIC...\n");
 	
 	PIC_remap(PIC1_OFFSET, PIC2_OFFSET);
 	
-	term_prints("Complete\n");
-	term_prints("Register Interrupts...");
+	DEBUG("Register Interrupts...\n");
 	
 	IRQ_disable_all();
 	
-	interrupts_register_exceptions();
-	interrupts_register_irq();
-	
-	register_isr();
+	IDT_register_exceptions();
+	IDT_register_irq();
+	ISR_register_drivers();
 	
 	IDTR_load();
 	
 	IRQ_enable(IRQ_TIMER);
 	IRQ_enable(IRQ_CONTROLLER_KEYBOARD);
-
-	timer_phase(500);
 	
-	term_prints("Complete\n");
-	term_prints("Setting up Memory Manager...");
+	DEBUG("Setting up timer...\n");
 	
+	timer_phase(50);
+	
+	DEBUG("Setting up memory...\n");
 	init_memory_manager();
 	
-	term_prints("Complete\n");
-	term_prints("Setting up ramfs...");
+	DEBUG("Setting up ramfs...\n");
 	
 	ram_dir* rootdir = create_root_directory(MEMORY_BEGIN, MEMORY_BEGIN + sizeof(ram_dir), get_total_memory()); // temp
 	
-	// test
-	ram_entry* file = get_first_file(rootdir);
-	term_prints((char*)file->name);
-	
-	create_directory(rootdir, "mem");
-	
-	
-	
-	term_prints("Complete\n");
+	cpu_detect();
 }
 
 

@@ -71,7 +71,6 @@ ram_entry* find_free_entry_region(ram_dir* dir, mem_addr start, mem_addr end)
 }
 int cutout_entry_region(ram_dir* dir, ram_entry* file, mem_addr start, mem_addr end)
 {
-	
 	if(file->range[0] == start)
 	{
 		file->range[0] = end + 1;
@@ -251,6 +250,8 @@ ram_entry* get_next_file(ram_dir* dir, ram_entry* iter)
 	
 	// Calculate point to start
 	mem_addr i = ((mem_addr)iter - (mem_addr)&dir->block[0]) / sizeof(ram_entry);
+	
+	++i; // start from the next entry
 	
 	while (i < RAM_FS_BLOCK_LENGTH)
 	{

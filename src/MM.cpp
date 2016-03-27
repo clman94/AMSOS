@@ -1,8 +1,11 @@
 
 #include <include/mm.h>
 #include <include/ports.h>
+#include <include/terminal.h>
 
-uint32_t avaliable_memory = 0;
+#define DEBUG(A) term_prints("[MM] "); term_prints(A);
+
+static uint32_t avaliable_memory = 0;
 
 uint32_t get_total_memory()
 {
@@ -22,7 +25,11 @@ void chk_memory_CMOS()
     avaliable_memory = l | h << 8;
 }
 
+
 void init_memory_manager()
 {
+	DEBUG("Detecting Memory...\n");
 	chk_memory_CMOS();
+	
+	DEBUG("Total Memory : 0x"); term_hex32(avaliable_memory);
 }

@@ -33,15 +33,16 @@ const unsigned char scancode_set[] =
 	"\0\0" // F11-12
 	;
 
-bool record_status = false;
-bool key_status[PRESSED_END] = { false, };
+static bool record_status = false;
+static bool key_status[PRESSED_END] = { false, };
 
-uint8_t key_buffer[128] = { '\0', };
-uint8_t buffer_limit = 1;
+static uint8_t key_buffer[128] = { '\0', };
+static uint8_t buffer_limit = 1;
 
 void push_buffer(uint8_t c)
 {
-	for(int i = 1; i < buffer_limit; i++){
+	for(int i = 1; i < buffer_limit; i++)
+	{
 		key_buffer[i] = key_buffer[i - 1];
 	}
 	key_buffer[0] = c;
@@ -51,9 +52,9 @@ uint8_t pop_buffer()
 {
 	uint8_t first = key_buffer[0];
 	
-	for(int i = 0; i < (buffer_limit - 1); i++){
+	for(int i = 0; i < (buffer_limit - 1); i++)
 		key_buffer[i] = key_buffer[i - 1];
-	}
+	
 	key_buffer[buffer_limit - 1] = '\0';
 	
 	return first;
@@ -103,7 +104,8 @@ bool keyboard_key_status(uint8_t scan)
 	return key_status[scan];
 }
 
-void update_status(uint8_t scan){
+void update_status(uint8_t scan)
+{
 	if (scan <= PRESSED_END)
 		   key_status[scan] = true;
 		   
@@ -119,6 +121,6 @@ void irqh_keyboard_controller()
 	if(record_status)
 		update_status(scancode);
 	
-	if(scan <= PRESSED_END)
+	if(scancode <= PRESSED_END)
 		push_buffer(scancode);
 }

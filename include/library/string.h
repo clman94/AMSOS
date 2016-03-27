@@ -7,11 +7,21 @@
 #define STRING_LENGTH_LIMIT 256
 
 static inline
-void* memset(void* ptr, char value, size_t num)
+void* memcpy(void* destination, const void* source, size_t num)
+{
+	for(size_t i = 0; i < num; i++)
+	{
+		((char*)destination)[i] = ((char*)source)[i];
+	}
+	return destination;
+}
+
+static inline
+void* memset(void* ptr, int value, size_t num)
 {
 	for (size_t i = 0; i < num; i++)
 	{
-		*((char*)ptr + i) = value;
+		*((char*)ptr + i) = (char)value;
 	}
 	return ptr;
 }

@@ -2,8 +2,6 @@
 #include <include/terminal.h>
 #include <include/isr.h>
 
-
-
 isr_t routines[16] =
 {
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -14,7 +12,6 @@ void ISR_register(uint8_t irq, isr_t routine)
 {
 	routines[irq] = routine;
 }
-
 
 // Called by interrupts.asm
 extern "C"

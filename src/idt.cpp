@@ -1,4 +1,5 @@
-#include <stdint.h>
+
+#include <include/idt.h>
 
 struct IDT_descriptor
 {
@@ -11,29 +12,18 @@ struct IDT_descriptor
 
 struct
 {
-    unsigned short limit;
+    uint16_t limit;
     IDT_descriptor* base;
 } __attribute__((packed)) IDTR;
 
 IDT_descriptor IDT[256];
 
-// Loads IDT with lidt
-void IDTR_load()
-{
-	IDTR.limit = 256*(sizeof(IDT_descriptor)-1);
-	IDTR.base = IDT;
-
-	// load IDTR
-	__asm__ __volatile__("lidt (%0)": :"m"(IDTR));
-}
-
-
 // Register function to interrupt
-void IDT_register(int index, void (*handler)(), int dpl)
+void IDT_register(uint32_t index, void (*handler)(), uint32_t dpl)
 {
-	unsigned short selector = 0x08;
-	unsigned char settings = 0;
-	unsigned int offset = (unsigned int)handler;
+	uint16_t selector = 0x08;
+	uint8_t settings = 0;
+	uint32_t offset = (uint32_t)handler;
 	
 	__asm__ __volatile__("movw %%cs,%0" :"=g"(selector));
 	
@@ -50,6 +40,16 @@ void IDT_register(int index, void (*handler)(), int dpl)
 	IDT[index].zero        = 0;
 	IDT[index].settings    = settings;
 	IDT[index].high_offset = (offset >> 16);
+}
+
+// Loads IDT with lidt
+void IDTR_load()
+{
+	IDTR.limit = 256*(sizeof(IDT_descriptor)-1);
+	IDTR.base = IDT;
+
+	// load IDTR
+	__asm__ __volatile__("lidt (%0)": :"m"(IDTR));
 }
 
 // Enable or disable interrupts
