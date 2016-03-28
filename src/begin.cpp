@@ -3,19 +3,28 @@
 #include <include/pic.h>
 #include <include/idt.h>
 #include <include/isr.h>
-#include <include/drivers/keyboard.h>
 #include <include/ports.h>
 #include <include/ramfs.h>
 #include <include/mm.h>
 #include <include/cpu.h>
 
+#include <include/drivers/keyboard.h>
+#include <include/drivers/serial.h>
+
 #include <include/interrupts.h>
 
 #define DEBUG(A) term_prints("[KERNEL] "); term_prints(A);
 
+void irq4()
+{
+	term_prints("irq4");
+}
+
 void ISR_register_drivers()
 {
-	ISR_register(1, (isr_t)irqh_keyboard_controller);
+	ISR_register(IRQ_CONTROLLER_KEYBOARD, (isr_t)IRQH_keyboard_controller);
+	ISR_register(IRQ_CONTROLLER_COM_1_3,  (isr_t)IRQH_serial_COM_1_3);
+	ISR_register(IRQ_CONTROLLER_COM_2_4,  (isr_t)IRQH_serial_COM_2_4);
 }
 
 void timer_phase(int hz)
@@ -47,10 +56,12 @@ void kern_setup()
 	
 	IRQ_enable(IRQ_TIMER);
 	IRQ_enable(IRQ_CONTROLLER_KEYBOARD);
+	IRQ_enable(IRQ_CONTROLLER_COM_1_3);
+	IRQ_enable(IRQ_CONTROLLER_COM_2_4);
 	
 	DEBUG("Setting up timer...\n");
 	
-	timer_phase(50);
+	timer_phase(500);
 	
 	DEBUG("Setting up memory...\n");
 	init_memory_manager();

@@ -114,7 +114,7 @@ void update_status(uint8_t scan)
 		   key_status[scan - RELEASE_BEGIN] = false;
 }
 
-void irqh_keyboard_controller()
+void IRQH_keyboard_controller()
 {
 	uint8_t scancode = port_in_b(PS2_READWRITE);
 	

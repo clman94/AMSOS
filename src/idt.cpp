@@ -8,7 +8,7 @@ struct IDT_descriptor
 	uint8_t  zero;
 	uint8_t settings;
 	uint16_t high_offset;
-}  __attribute__ ((packed));
+} __attribute__ ((packed));
 
 struct
 {

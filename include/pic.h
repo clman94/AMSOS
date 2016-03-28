@@ -12,8 +12,8 @@ void PIC_remap(int off1, int off2);
 #define IRQ_TIMER               0x0
 #define IRQ_CONTROLLER_KEYBOARD 0x1
 #define IRQ_CASCADED_SIGNALS    0x2
-#define IRQ_CONTROLLER_SERIAL_2 0x3
-#define IRQ_CONTROLLER_SERIAL_1 0x4
+#define IRQ_CONTROLLER_COM_2_4  0x3
+#define IRQ_CONTROLLER_COM_1_3  0x4
 #define IRQ_PARALLEL_2_3        0x5
 #define IRQ_CONTROLLER_FLOPPY   0x6
 #define IRQ_PARALLEL_1          0x7

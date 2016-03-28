@@ -1,5 +1,5 @@
-#ifndef H_KEYBOARD
-#define H_KEYBOARD
+#ifndef DRIVER_KEYBOARD_H
+#define DRIVER_KEYBOARD_H
 
 #include <stdint.h>
 
@@ -33,6 +33,6 @@ void keyboard_enable_direct();
 void keyboard_disable_direct();
 bool keyboard_key_status(uint8_t scan);
 
-void irqh_keyboard_controller();
+void IRQH_keyboard_controller();
 
 #endif

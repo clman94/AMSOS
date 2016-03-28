@@ -37,4 +37,5 @@ void cpu_detect()
 	term_prints("\n[CPU] STD Level : 0x"); term_hex32(info.std_max);
 	term_prints("\n[CPU] Vender    : "); term_prints(info.id);
 	term_prints("\n[CPU] Frequency : 0x"); term_hex32(info.freq);
+	term_printc('\n');
 }

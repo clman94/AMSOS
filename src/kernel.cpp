@@ -39,11 +39,21 @@ void kern_main()
 	// pie = 12 / pie;
 	
 	DEBUG("Initualising COM1\n");
-	SERIAL_init(SERIAL_COM1, 3, SERIAL_BITS_8);
+	serial_COM_init(SERIAL_COM1, 3, SERIAL_BITS_8);
 	DEBUG("Sending...");
 	serial_COM_send(SERIAL_COM1, 'A');
+	serial_COM_send(SERIAL_COM1, 'B');
+	serial_COM_send(SERIAL_COM1, 'C');
+	serial_COM_send(SERIAL_COM1, 'D');
 	DEBUG_COMPLETE();
 	
+	DEBUG("Listening...\n");
+	while(true)
+	{
+		DEBUG("Recieved : "); 
+		term_printc(serial_COM_recieve(SERIAL_COM1, true));
+		term_printc('\n');
+	}
 	
 	keyboard_enable_buffer();
 	keyboard_enable_direct();
