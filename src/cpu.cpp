@@ -1,6 +1,6 @@
-#include <include/cpu.h>
-#include <include/library/string.h>
-#include <include/terminal.h>
+#include <amsos/cpu.h>
+#include <amsos/library/string.h>
+#include <amsos/terminal.h>
 
 struct cpu_info
 {

@@ -1,8 +1,8 @@
 
-#include <include/ramfs.h>
-#include <include/library/string.h>
+#include <amsos/ramfs.h>
+#include <amsos/library/string.h>
 
-ram_dir* clear_directory_block(ram_dir* dir)
+ram_dir* clear_dir_block(ram_dir* dir)
 {
 	for(uint32_t i = 0; i < RAM_FS_BLOCK_LENGTH; i++)
 	{
@@ -11,14 +11,15 @@ ram_dir* clear_directory_block(ram_dir* dir)
 	return dir;
 }
 
-ram_dir* create_root_directory(mem_addr address, mem_addr start, mem_addr end)
+ram_dir* create_root_dir(mem_addr address, mem_addr start, mem_addr end)
 {
 	ram_dir* dir = (ram_dir*)address;
 	
-	dir->root = dir;
+	dir->root = dir;    // points to itself
 	dir->up   = nullptr;
+	dir->ref  = nullptr;
 	
-	clear_directory_block(dir);
+	clear_dir_block(dir);
 	
 	const char* name = "free";
 	
@@ -77,9 +78,7 @@ int cutout_entry_region(ram_dir* dir, ram_entry* file, mem_addr start, mem_addr 
 		
 		// Region takes entire space
 		if(file->range[1] == end)
-		{
 			file->type = RAM_FILE_TYPE_NONE;
-		}
 	}
 	else if(file->range[1] == end)
 	{
@@ -132,8 +131,24 @@ ram_entry* allocate_file(ram_dir* dir, mem_addr size)
 	return ef;
 }
 
-ram_entry* allocate_file_region(ram_dir* dir, mem_addr start, mem_addr end)
+
+ram_entry* allocate_file_region(ram_dir* dir, mem_addr start, mem_addr end, bool force)
 {
+	if(force)
+	{
+		// Find file entry that is not being used
+		ram_entry* ef = find_unused_entry(dir);
+		
+		// Reached full capacity
+		if(ef == nullptr)
+			return nullptr;
+		
+		ef->range[0] = start;
+		ef->range[1] = end;
+		
+		return ef;
+	}
+	
 	// Find file entry with the right amount of room
 	// At the moment, root has all the free space
 	ram_entry* nf = find_free_entry_region(dir->root, start, end);
@@ -142,10 +157,8 @@ ram_entry* allocate_file_region(ram_dir* dir, mem_addr start, mem_addr end)
 	if (nf == nullptr)
 		return nullptr;
 	
-	// Find file entry that is not being used
 	ram_entry* ef = find_unused_entry(dir);
 	
-	// Reached full capacity
 	if(ef == nullptr)
 		return nullptr;
 	
@@ -157,7 +170,7 @@ ram_entry* allocate_file_region(ram_dir* dir, mem_addr start, mem_addr end)
 	return ef;
 }
 
-
+// Finds an region of free space and allocates the requested space automatically
 ram_entry* create_file(ram_dir* dir, const char* name, mem_addr size, int type)
 {
 	ram_entry* nf = allocate_file(dir, size);
@@ -173,10 +186,14 @@ ram_entry* create_file(ram_dir* dir, const char* name, mem_addr size, int type)
 	return nf;
 }
 
-ram_entry* make_file(ram_dir* dir, const char* name, mem_addr start, mem_addr end, int type)
+// Makes a selected section of memory a file
+ram_entry* make_file(ram_dir* dir, const char* name, mem_addr start, mem_addr end, int type, bool force)
 {
 	// Check for free space
-	ram_entry* nf = allocate_file_region(dir, start, end);
+	ram_entry* nf = allocate_file_region(dir, start, end, force);
+	
+	if (nf == nullptr)
+		return nullptr;
 	
 	strncpy((char*)nf->name, name, strlen(name) + 1);
 	nf->type        = type;
@@ -186,7 +203,7 @@ ram_entry* make_file(ram_dir* dir, const char* name, mem_addr start, mem_addr en
 	return nf;
 }
 
-ram_dir* create_directory(ram_dir* dir, const char* name)
+ram_dir* create_dir(ram_dir* dir, const char* name)
 {
 	// Create the file representing the directory
 	ram_entry* nf = create_file(dir, name, sizeof(ram_dir),RAM_FILE_TYPE_DIRECTORY);
@@ -198,14 +215,24 @@ ram_dir* create_directory(ram_dir* dir, const char* name)
 	
 	nd->root = dir->root;
 	nd->up   = dir;
+	nd->ref  = nf;
 	
-	clear_directory_block(nd);
+	clear_dir_block(nd);
 	
 	return nd;
 }
 
-ram_dir* find_directory(ram_dir* dir, const char* name)
+ram_dir* find_dir(ram_dir* dir, const char* name)
 {
+	if(dir == nullptr)
+		return nullptr;
+	
+	if (strcmp(":", name))
+		return dir->root;
+	
+	if (strcmp("..", name))
+		return dir->up;
+	
 	for(mem_addr i = 0; i < RAM_FS_BLOCK_LENGTH; i++)
 	{
 		if(dir->block[i].type == RAM_FILE_TYPE_DIRECTORY &&
@@ -215,11 +242,15 @@ ram_dir* find_directory(ram_dir* dir, const char* name)
 	return nullptr;
 }
 
+
 ram_entry* find_file(ram_dir* dir, const char* name)
 {
+	if(dir == nullptr)
+		return nullptr;
+	
 	for(mem_addr i = 0; i < RAM_FS_BLOCK_LENGTH; i++)
 	{
-		if(dir->block[i].type == RAM_FILE_TYPE_FILE &&
+		if(dir->block[i].type != RAM_FILE_TYPE_NONE &&
 		   !strcmp(dir->block[i].name, name))
 		   return &dir->block[i];
 	}
@@ -229,25 +260,18 @@ ram_entry* find_file(ram_dir* dir, const char* name)
 // Find first valid entry
 ram_entry* get_first_file(ram_dir* dir)
 {
-	ram_entry* f = nullptr;
-	
 	mem_addr i = 0;
 	while (i < RAM_FS_BLOCK_LENGTH)
 	{
 		if(dir->block[i].type != RAM_FILE_TYPE_NONE)
-		{
-			f = &dir->block[i];
-			break;
-		}
+			return &dir->block[i];
 		++i;
 	}
-	return f;
+	return nullptr;
 }
 
 ram_entry* get_next_file(ram_dir* dir, ram_entry* iter)
 {
-	ram_entry* f = nullptr;
-	
 	// Calculate point to start
 	mem_addr i = ((mem_addr)iter - (mem_addr)&dir->block[0]) / sizeof(ram_entry);
 	
@@ -256,13 +280,41 @@ ram_entry* get_next_file(ram_dir* dir, ram_entry* iter)
 	while (i < RAM_FS_BLOCK_LENGTH)
 	{
 		if(dir->block[i].type != RAM_FILE_TYPE_NONE)
-		{
-			f = &dir->block[i];
-			break;
-		}
+			return &dir->block[i];
 		++i;
 	}
-	return f;
+	return nullptr;
+}
+
+ram_entry* get_entry_path(ram_dir* dir, const char* path)
+{
+	const char *cc = path;
+	char prt[256];
+	
+	while (*cc)
+	{
+		// Read section
+		for (int i = 0; i < 256; i++)
+		{
+			prt[i]     = *cc;
+			prt[i + 1] = 0;
+			++cc;
+			
+			// Move to new dir
+			if (*cc == '/'){
+				dir = find_dir(dir, prt);
+				break;
+			}
+			
+			// Return file
+			if(!*cc)
+				return find_file(dir, prt);
+		}
+		
+		++cc;
+	}
+	
+	return nullptr;
 }
 
 

@@ -1,8 +1,8 @@
 #include <stdint.h>
 
-#include <include/registers.h>
-#include <include/terminal.h>
-#include <include/drivers/keyboard.h>
+#include <amsos/registers.h>
+#include <amsos/terminal.h>
+#include <amsos/drivers/keyboard.h>
 
 const char* error_messages[] = 
 {

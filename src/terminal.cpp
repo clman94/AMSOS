@@ -1,5 +1,7 @@
 
-#include <include/terminal.h>
+#include <amsos/terminal.h>
+
+// TODO : cleanup
 
 static const int term_width  = 80;
 static const int term_height = 25;
@@ -7,7 +9,7 @@ static uint32_t  term_x      = 0;
 static uint32_t  term_y      = 0;
 
 static uint8_t   term_color  = 0x07;
-static uint8_t*  term_buffer = (unsigned char*)0xb8000;
+static uint8_t*  term_buffer = (uint8_t*)0xb8000; // default
 
 void term_set_position(uint32_t x, uint32_t y)
 {
@@ -77,7 +79,8 @@ void term_printc(char c)
 void term_prints(const char* s)
 {
 	int i = 0;
-	while(s[i] != 0){
+	while(s[i] != 0)
+	{
 		term_printc(s[i]);
 		i++;
 	}
@@ -87,15 +90,28 @@ void term_hex32(uint32_t num)
 {
 	const char hex[] = "0123456789ABCDEF";
 	char conv[9] = { '0', };
-	for(int i = 0; i < 9; i++){
+	for(int i = 0; i < 9; i++)
+	{
 		conv[i] = hex[(num%16)];
 		num /= 16;
 	}
 	
 	char* out = "000000000\0";
-	for(int i = 0; i < 9; i++){
+	for(int i = 0; i < 9; i++)
+	{
 		out[8 - i] = conv[i];
 	}
 	
 	term_prints(out);
+}
+
+int term_init(ram_dir* root)
+{
+	ram_entry* m = get_entry_path(root, "system/video/80X25");
+	if(m == nullptr)
+		return 1;
+	
+	term_buffer = (uint8_t*)m->range[0];
+	
+	return 0;
 }

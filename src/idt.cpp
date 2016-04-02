@@ -1,5 +1,5 @@
 
-#include <include/idt.h>
+#include <amsos/idt.h>
 
 struct IDT_descriptor
 {
@@ -42,7 +42,6 @@ void IDT_register(uint32_t index, void (*handler)(), uint32_t dpl)
 	IDT[index].high_offset = (offset >> 16);
 }
 
-// Loads IDT with lidt
 void IDTR_load()
 {
 	IDTR.limit = 256*(sizeof(IDT_descriptor)-1);

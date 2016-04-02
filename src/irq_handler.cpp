@@ -1,6 +1,6 @@
-#include <include/pic.h>
-#include <include/terminal.h>
-#include <include/isr.h>
+#include <amsos/pic.h>
+#include <amsos/terminal.h>
+#include <amsos/isr.h>
 
 isr_t routines[16] =
 {

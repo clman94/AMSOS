@@ -1,6 +1,6 @@
-#include <include/drivers/keyboard.h>
-#include <include/terminal.h>
-#include <include/drivers/serial.h>
+#include <amsos/drivers/keyboard.h>
+#include <amsos/terminal.h>
+#include <amsos/drivers/serial.h>
 
 #define DEBUG(A) term_prints("[KERNEL] "); term_prints(A);
 #define DEBUG_COMPLETE() term_prints("Complete\n");
@@ -18,7 +18,8 @@ char getchar()
 }
 
 // A basic input function
-void basic_input(char* str, int max = 256){
+void basic_input(char* str, int max = 256)
+{
 	int i = 0;
 	char in = 0;
 	while (i < max)
@@ -34,26 +35,9 @@ void basic_input(char* str, int max = 256){
 extern "C"
 void kern_main()
 {	
-	// do divide by 0 test
+	// divide by 0 test
 	// unsigned int pie = 1 - 1;
 	// pie = 12 / pie;
-	
-	DEBUG("Initualising COM1\n");
-	serial_COM_init(SERIAL_COM1, 3, SERIAL_BITS_8);
-	DEBUG("Sending...");
-	serial_COM_send(SERIAL_COM1, 'A');
-	serial_COM_send(SERIAL_COM1, 'B');
-	serial_COM_send(SERIAL_COM1, 'C');
-	serial_COM_send(SERIAL_COM1, 'D');
-	DEBUG_COMPLETE();
-	
-	DEBUG("Listening...\n");
-	while(true)
-	{
-		DEBUG("Recieved : "); 
-		term_printc(serial_COM_recieve(SERIAL_COM1, true));
-		term_printc('\n');
-	}
 	
 	keyboard_enable_buffer();
 	keyboard_enable_direct();
@@ -63,5 +47,6 @@ void kern_main()
 	while(true)
 	{
 		basic_input(input);
+		term_prints("piesadasd\n");
 	}
 }

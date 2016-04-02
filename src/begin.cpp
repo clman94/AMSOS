@@ -1,19 +1,21 @@
 
-#include <include/terminal.h>
-#include <include/pic.h>
-#include <include/idt.h>
-#include <include/isr.h>
-#include <include/ports.h>
-#include <include/ramfs.h>
-#include <include/mm.h>
-#include <include/cpu.h>
+#include <amsos/terminal.h>
+#include <amsos/pic.h>
+#include <amsos/idt.h>
+#include <amsos/isr.h>
+#include <amsos/ports.h>
+#include <amsos/ramfs.h>
+#include <amsos/mm.h>
+#include <amsos/cpu.h>
 
-#include <include/drivers/keyboard.h>
-#include <include/drivers/serial.h>
+#include <amsos/drivers/keyboard.h>
+#include <amsos/drivers/serial.h>
 
-#include <include/interrupts.h>
+#include <amsos/interrupts.h>
 
 #define DEBUG(A) term_prints("[KERNEL] "); term_prints(A);
+
+static ram_dir* rootdir = nullptr;
 
 void irq4()
 {
@@ -33,6 +35,27 @@ void timer_phase(int hz)
     port_out_b(0x43, 0x36);
     port_out_b(0x40, divisor & 0xFF);
     port_out_b(0x40, divisor >> 8);
+}
+
+void debug_file_tree(ram_dir* dir)
+{
+	ram_entry* e = get_first_file(dir);
+	while (e)
+	{
+		if(e->type == RAM_FILE_TYPE_DIRECTORY)
+		{
+			term_prints("----");
+			term_prints(e->name);
+			term_prints("----\n");
+			debug_file_tree((ram_dir*)e->range[0]);
+		}
+		else
+		{
+			term_prints(e->name);
+			term_printc('\n');	
+		}
+		e = get_next_file(dir, e);
+	}
 }
 
 extern "C"
@@ -68,9 +91,17 @@ void kern_setup()
 	
 	DEBUG("Setting up ramfs...\n");
 	
-	ram_dir* rootdir = create_root_directory(MEMORY_BEGIN, MEMORY_BEGIN + sizeof(ram_dir), get_total_memory()); // temp
+	rootdir = create_root_dir(MEMORY_BEGIN, MEMORY_BEGIN + sizeof(ram_dir), get_total_memory()); // temp
+	
+	ram_dir* dir_system  = create_dir(rootdir,    "system");
+	ram_dir* dir_video   = create_dir(dir_system, "video");
+	make_file(dir_video, "80X25", 0xB8000, 0xB8FA0, RAM_FILE_TYPE_FILE, true);
+	
+	debug_file_tree(rootdir);
 	
 	cpu_detect();
+	
+	term_init(rootdir);
 }
 
 

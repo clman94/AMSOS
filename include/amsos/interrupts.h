@@ -1,6 +1,6 @@
 // This header is intended for use in begin.cpp only
 
-#include <include/idt.h>
+#include <amsos/idt.h>
 
 extern "C" {
 void __asm_interrupt_0();

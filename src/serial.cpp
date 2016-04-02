@@ -1,6 +1,6 @@
 
-#include <include/ports.h>
-#include <include/drivers/serial.h>
+#include <amsos/ports.h>
+#include <amsos/drivers/serial.h>
 
 #define PORT_COM1         0x3F8
 #define PORT_COM2         0x2F8
@@ -24,7 +24,7 @@
 #define INT_STATUS       (1<<3)
 #define INT_CHANGE       (1<<4)
 
-#define DLAB_ENABLE      (1<<8)
+#define DLAB_ENABLE      (1<<7)
 
 #define FIFO_ENABLE       1
 #define FIFO_CL_RECEIVER (1<<1)
@@ -51,11 +51,38 @@
 // Used as a selecter for _com parameters so the ports arn't exposed
 static const uint16_t COMSEL[4] = { PORT_COM1, PORT_COM2, PORT_COM3, PORT_COM4 };
 
-static struct{
+static struct
+{
 	bool TE; // Transmitter empty
 	bool DR; // Data ready
 	bool initialised;
 } COM_Status[4] = { { false, }, };
+
+#define SERIAL_BUFFER_SIZE 128
+static uint8_t buffer[SERIAL_BUFFER_SIZE] = { '\0', };
+
+inline 
+void push_buffer(uint8_t c)
+{
+	for(int i = 1; i < SERIAL_BUFFER_SIZE; i++)
+	{
+		buffer[i] = buffer[i - 1];
+	}
+	buffer[0] = c;
+}
+
+inline 
+uint8_t pop_buffer()
+{
+	uint8_t first = buffer[0];
+	
+	for(int i = 0; i < SERIAL_BUFFER_SIZE - 1; i++)
+		buffer[i] = buffer[i - 1];
+	
+	buffer[SERIAL_BUFFER_SIZE - 1] = '\0';
+	
+	return first;
+}
 
 static inline 
 int is_transmit_empty(int _com)
@@ -95,13 +122,13 @@ void IRQH_serial_COM_2_4()
 		= is_data_ready(SERIAL_COM4);
 }
 
-void serial_COM_send(int _com, char data)
+void serial_COM_send(int _com, uint8_t data)
 {
 	   while (!COM_Status[_com].TE);
 	   port_out_b(COMSEL[_com], data);
 }
 
-char serial_COM_recieve(int _com, bool wait)
+uint8_t serial_COM_recieve(int _com, bool wait)
 {
 	while(wait && !COM_Status[_com].DR);
 	return port_in_b(COMSEL[_com]);
@@ -128,7 +155,7 @@ void serial_COM_init(int _com, uint16_t baud_div, char bits)
 		LINE_CTRL_PARITY(0) | 
 		bits); // Expects the use of SERIAL_BITS_? in seral.h
 	
-	// Enable FIFO, cleared, and 14b thrreshold
+	// Enable FIFO, cleared, and 14b threshold
 	port_out_b(com + REG_INTID_FIFO, 
 		FIFO_ENABLE       | 
 		FIFO_CL_RECEIVER  | 

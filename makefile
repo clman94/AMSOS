@@ -3,7 +3,7 @@ ASM_FILES      := $(wildcard asm/*.asm)
 OBJ_FILES      := $(addprefix obj/,$(notdir $(CPP_FILES:.cpp=.o))) $(addprefix obj/,$(notdir $(ASM_FILES:.asm=.o)))
 
 CPP            := g++
-CPP_INCLUDES   := -I./
+CPP_INCLUDES   := -I./include
 CPP_FLAGS      := -MMD -std=c++11 -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti 
 
 ASM            := nasm

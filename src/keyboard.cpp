@@ -1,7 +1,7 @@
 #include <stdint.h>
 
-#include <include/ports.h>
-#include <include/drivers/keyboard.h>
+#include <amsos/ports.h>
+#include <amsos/drivers/keyboard.h>
 
 #define PS2_READWRITE 0x60
 
@@ -39,7 +39,7 @@ static bool key_status[PRESSED_END] = { false, };
 static uint8_t key_buffer[128] = { '\0', };
 static uint8_t buffer_limit = 1;
 
-void push_buffer(uint8_t c)
+inline void push_buffer(uint8_t c)
 {
 	for(int i = 1; i < buffer_limit; i++)
 	{
@@ -48,7 +48,7 @@ void push_buffer(uint8_t c)
 	key_buffer[0] = c;
 }
 
-uint8_t pop_buffer()
+inline uint8_t pop_buffer()
 {
 	uint8_t first = key_buffer[0];
 	
@@ -104,7 +104,7 @@ bool keyboard_key_status(uint8_t scan)
 	return key_status[scan];
 }
 
-void update_status(uint8_t scan)
+inline void update_status(uint8_t scan)
 {
 	if (scan <= PRESSED_END)
 		   key_status[scan] = true;

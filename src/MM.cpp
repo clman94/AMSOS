@@ -1,7 +1,7 @@
 
-#include <include/mm.h>
-#include <include/ports.h>
-#include <include/terminal.h>
+#include <amsos/mm.h>
+#include <amsos/ports.h>
+#include <amsos/terminal.h>
 
 #define DEBUG(A) term_prints("[MM] "); term_prints(A);
 
