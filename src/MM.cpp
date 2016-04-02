@@ -2,8 +2,9 @@
 #include <amsos/mm.h>
 #include <amsos/ports.h>
 #include <amsos/terminal.h>
+#include <amsos/library/io.h>
 
-#define DEBUG(A) term_prints("[MM] "); term_prints(A);
+#define DEBUG(A) printf("[MM] %s", A);
 
 static uint32_t avaliable_memory = 0;
 
@@ -31,5 +32,5 @@ void init_memory_manager()
 	DEBUG("Detecting Memory...\n");
 	chk_memory_CMOS();
 	
-	DEBUG("Total Memory : 0x"); term_hex32(avaliable_memory); term_printc('\n');
+	DEBUG("Total Memory : 0x"); term_hex32(avaliable_memory); printf("\n");
 }

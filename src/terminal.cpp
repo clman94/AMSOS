@@ -56,12 +56,12 @@ uint8_t term_get_color()
 }
 
 // Prints a character
-void term_printc(char c)
+int term_printc(char c)
 {
 	if(c == '\n'){ // New line
 		term_x = 0;
 		term_y++;
-		return;
+		return 1;
 	}else{
 		term_set(term_x, term_y, c);
 	}
@@ -73,10 +73,11 @@ void term_printc(char c)
 			term_y = 0;
 		}
 	}
+	return 1;
 }
 
 // Prints a string
-void term_prints(const char* s)
+int term_prints(const char* s)
 {
 	int i = 0;
 	while(s[i] != 0)
@@ -84,25 +85,27 @@ void term_prints(const char* s)
 		term_printc(s[i]);
 		i++;
 	}
+	return i;
 }
 
-void term_hex32(uint32_t num)
+int term_hex32(uint32_t num, int len)
 {
 	const char hex[] = "0123456789ABCDEF";
 	char conv[9] = { '0', };
-	for(int i = 0; i < 9; i++)
+	for(int i = 0; i < (len <= 9 ? len : 9); i++)
 	{
 		conv[i] = hex[(num%16)];
 		num /= 16;
 	}
 	
 	char* out = "000000000\0";
-	for(int i = 0; i < 9; i++)
+	for(int i = 0; i < (len <= 9 ? len : 9); i++)
 	{
 		out[8 - i] = conv[i];
 	}
 	
 	term_prints(out);
+	return len;
 }
 
 int term_init(ram_dir* root)

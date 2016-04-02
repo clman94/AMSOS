@@ -3,6 +3,7 @@
 #include <amsos/registers.h>
 #include <amsos/terminal.h>
 #include <amsos/drivers/keyboard.h>
+#include <amsos/library/io.h>
 
 const char* error_messages[] = 
 {
@@ -27,20 +28,20 @@ void display_unhandled_exception(uint32_t irq, REG_x86_error* regs)
 {
 	//term_clear();
 	
-	term_prints("    !! PANIC !!    \n");
-	term_prints("UNHANDLED EXCEPTION\n\n");
+	printf("    !! PANIC !!    \n");
+	printf("UNHANDLED EXCEPTION\n\n");
 	
-	term_prints("Error : ");
-	if(irq > 14) term_prints("Unknown");
-	else         term_prints(error_messages[irq]);
+	printf("Error : ");
+	if(irq > 14) printf("Unknown");
+	else         printf(error_messages[irq]);
 	
-	term_prints("\nCode  : 0x");
+	printf("\nCode  : 0x");
 	term_hex32(irq);
 	
-	term_prints("\nEAX:"); term_hex32(regs->general.eax);
-	term_prints("  EBX:"); term_hex32(regs->general.ebx);
-	term_prints("\nECX:"); term_hex32(regs->general.ecx);
-	term_prints("  EDX:"); term_hex32(regs->general.edx);
+	printf("\nEAX:"); term_hex32(regs->general.eax);
+	printf("  EBX:"); term_hex32(regs->general.ebx);
+	printf("\nECX:"); term_hex32(regs->general.ecx);
+	printf("  EDX:"); term_hex32(regs->general.edx);
 	while(true){
 		asm("hlt");
 	}

@@ -13,7 +13,9 @@
 
 #include <amsos/interrupts.h>
 
-#define DEBUG(A) term_prints("[KERNEL] "); term_prints(A);
+#include <amsos/library/io.h>
+
+#define DEBUG(A) printf("[KERNEL] %s", A);
 
 static ram_dir* rootdir = nullptr;
 
@@ -44,15 +46,15 @@ void debug_file_tree(ram_dir* dir)
 	{
 		if(e->type == RAM_FILE_TYPE_DIRECTORY)
 		{
-			term_prints("----");
-			term_prints(e->name);
-			term_prints("----\n");
+			printf("----");
+			printf("%s", e->name);
+			printf("----\n");
 			debug_file_tree((ram_dir*)e->range[0]);
 		}
 		else
 		{
-			term_prints(e->name);
-			term_printc('\n');	
+			printf("%s", e->name);
+			printf("\n");
 		}
 		e = get_next_file(dir, e);
 	}

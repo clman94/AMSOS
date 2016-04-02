@@ -1,6 +1,7 @@
 #include <amsos/cpu.h>
 #include <amsos/library/string.h>
 #include <amsos/terminal.h>
+#include <amsos/library/io.h>
 
 struct cpu_info
 {
@@ -33,9 +34,9 @@ void cpu_detect()
 	info.freq_max = gregs[1];
 	info.bus_freq = gregs[2];
 	
-	term_prints("[CPU] #CPU INFO#");
-	term_prints("\n[CPU] STD Level : 0x"); term_hex32(info.std_max);
-	term_prints("\n[CPU] Vender    : "); term_prints(info.id);
-	term_prints("\n[CPU] Frequency : 0x"); term_hex32(info.freq);
-	term_printc('\n');
+	printf("[CPU] #CPU INFO#");
+	printf("\n[CPU] STD Level : 0x"); term_hex32(info.std_max);
+	printf("\n[CPU] Vender    : %s", info.id);
+	printf("\n[CPU] Frequency : 0x"); term_hex32(info.freq);
+	printf("\n");
 }

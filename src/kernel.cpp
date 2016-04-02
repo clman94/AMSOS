@@ -1,9 +1,9 @@
 #include <amsos/drivers/keyboard.h>
-#include <amsos/terminal.h>
+#include <amsos/library/io.h>
 #include <amsos/drivers/serial.h>
 
-#define DEBUG(A) term_prints("[KERNEL] "); term_prints(A);
-#define DEBUG_COMPLETE() term_prints("Complete\n");
+#define DEBUG(A) printf("[KERNEL] %s", A);
+#define DEBUG_COMPLETE() printf("Complete\n");
 
 char getchar()
 {
@@ -12,7 +12,7 @@ char getchar()
 	if(key){
 		bool shift = keyboard_key_status(SCANCODE_LSHIFT);
 		key = shift ? (key - 'a' + 'A') : key;
-		term_printc(key);
+		printf("%c", key);
 	}
 	return key;
 }
@@ -47,6 +47,6 @@ void kern_main()
 	while(true)
 	{
 		basic_input(input);
-		term_prints("piesadasd\n");
+		printf("piesadasd\n");
 	}
 }
