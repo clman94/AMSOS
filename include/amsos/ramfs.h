@@ -9,18 +9,24 @@ The main purpose of this system is to select large/sections
 of memory and represent them as files. For example, the 
 video ram can be stored as "/system/video/25X80".
 This is useful in preventing conflicts/overlapping of
-section of memory different components the OS use.
+sections of memory that different components the OS use.
+
+Possible plans use the directory listings to represent files
+in an external storage device
 
 FYI, the sections for dynamic memory itself is contained in
-a separate file(s) as well. In dir "/system/dm/"
+a separate file(s) as well. In dir "/system/mm/"
 
-Possible layout:
+Possible layout (this isn't final):
 /system
-  /video
-    /80X25
-  /dm                   -Dynamic Memory
-    /[hex]
-
+|  /video
+|  |  /80X25
+|  /mm
+|  /paging
+/external
+|  /hd
+|  |  /0
+|  /
 */
 
 // In bytes

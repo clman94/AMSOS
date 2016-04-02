@@ -31,5 +31,5 @@ void init_memory_manager()
 	DEBUG("Detecting Memory...\n");
 	chk_memory_CMOS();
 	
-	DEBUG("Total Memory : 0x"); term_hex32(avaliable_memory);
+	DEBUG("Total Memory : 0x"); term_hex32(avaliable_memory); term_printc('\n');
 }
