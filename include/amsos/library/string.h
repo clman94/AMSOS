@@ -74,22 +74,6 @@ char* strcpy(char* s1, const char* s2)
 }
 
 static inline 
-int strcmp(const char* s1, const char* s2)
-{
-	int i = 0;
-	while (i < STRING_LENGTH_LIMIT)
-	{
-		if (s1[i] == 0 && // ||?
-		    s2[i] == 0)
-			break;
-			
-		if (s1[i] != s2[i])
-			return s1[i] - s2[i];
-	}
-	return 0;
-}
-
-static inline 
 int strncmp(const char* s1, const char* s2, size_t n)
 {
 	for (size_t i = 0; i < n; i++)
@@ -103,5 +87,24 @@ int strncmp(const char* s1, const char* s2, size_t n)
 	}
 	return 0;
 }
+
+static inline 
+int strcmp(const char* s1, const char* s2)
+{
+	int i = 0;
+	while (i < STRING_LENGTH_LIMIT)
+	{
+		if (s1[i] == 0 && // ||?
+		    s2[i] == 0)
+			break;
+			
+		if (s1[i] != s2[i])
+			return s1[i] - s2[i];
+		++i;
+	}
+	return 0;
+}
+
+
 
 #endif

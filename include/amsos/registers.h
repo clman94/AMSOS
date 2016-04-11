@@ -1,3 +1,6 @@
+#ifndef REGISTERS_H
+#define REGISTERS_H
+
 #include <stdint.h>
 
 struct REG_x86_segment{
@@ -20,3 +23,5 @@ struct REG_x86_error{
 	uint32_t err_code;
 	uint32_t eip, cs, eflags, useresp, ss;
 };
+
+#endif

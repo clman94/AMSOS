@@ -5,7 +5,7 @@ OBJ_FILES      := $(addprefix obj/,$(notdir $(ASM_BOOT_FILES:.asm=.o))) $(addpre
 
 CPP            := g++
 CPP_INCLUDES   := -I./include
-CPP_FLAGS      := -MMD -std=c++11 -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti 
+CPP_FLAGS      := -MMD -std=c++11 -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 
 ASM            := nasm
 ASM_FLAGS      := -felf32
