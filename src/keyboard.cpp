@@ -15,7 +15,7 @@ const unsigned char scancode_set[] =
 	"\0" // escape
 	"1234567890-=\b"
 	"\tqwertyuiop[]"
-	"\0" // enter
+	"\n" // enter
 	"\0" // lcontrol
 	"asdfghjkl;'`"
 	"\0" // lshift

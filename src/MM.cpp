@@ -22,8 +22,8 @@ void chk_memory_CMOS()
 	
     port_out_b(0x70, 0x31);
     h = port_in_b(0x71);
- 
-    avaliable_memory = l | h << 8;
+	
+    avaliable_memory = l | (h << 8);
 }
 
 

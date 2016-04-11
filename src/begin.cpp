@@ -7,11 +7,12 @@
 #include <amsos/ramfs.h>
 #include <amsos/mm.h>
 #include <amsos/cpu.h>
+#include <amsos/sched.h>
+#include <amsos/registers.h>
+#include <amsos/interrupts.h>
 
 #include <amsos/drivers/keyboard.h>
 #include <amsos/drivers/serial.h>
-
-#include <amsos/interrupts.h>
 
 #include <amsos/library/io.h>
 
@@ -19,9 +20,9 @@
 
 static ram_dir* rootdir = nullptr;
 
-void irq4()
+ram_dir* get_root_dir()
 {
-	term_prints("irq4");
+	return rootdir;
 }
 
 void ISR_register_drivers()
@@ -98,6 +99,10 @@ void kern_setup()
 	ram_dir* dir_system  = create_dir(rootdir,    "system");
 	ram_dir* dir_video   = create_dir(dir_system, "video");
 	make_file(dir_video, "80X25", 0xB8000, 0xB8FA0, RAM_FILE_TYPE_FILE, true);
+	
+	ram_dir* dir_proc = create_dir(dir_system, "proc");
+	
+	//sched_init(rootdir);
 	
 	debug_file_tree(rootdir);
 	

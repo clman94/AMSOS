@@ -42,7 +42,15 @@ int printf(const char* f, ...)
 				const char* a = va_arg(vl, const char*);
 				len += term_prints(a);
 			}
-			
+			if(*cc == '%')
+			{
+				len += term_printc('%');
+			}
+			if(*cc == 'C')
+			{
+				uint32_t a = va_arg(vl, uint32_t);
+				term_set_color(a);
+			}
 		}else 
 			len += term_printc(*cc);
 		++cc; // next

@@ -206,7 +206,7 @@ ram_entry* make_file(ram_dir* dir, const char* name, mem_addr start, mem_addr en
 ram_dir* create_dir(ram_dir* dir, const char* name)
 {
 	// Create the file representing the directory
-	ram_entry* nf = create_file(dir, name, sizeof(ram_dir),RAM_FILE_TYPE_DIRECTORY);
+	ram_entry* nf = create_file(dir, name, sizeof(ram_dir), RAM_FILE_TYPE_DIRECTORY);
 	
 	if (nf == nullptr)
 		return nullptr;
@@ -227,10 +227,10 @@ ram_dir* find_dir(ram_dir* dir, const char* name)
 	if(dir == nullptr)
 		return nullptr;
 	
-	if (strcmp(":", name))
+	if (!strcmp(":", name))
 		return dir->root;
 	
-	if (strcmp("..", name))
+	if (!strcmp("..", name))
 		return dir->up;
 	
 	for(mem_addr i = 0; i < RAM_FS_BLOCK_LENGTH; i++)
@@ -272,6 +272,8 @@ ram_entry* get_first_file(ram_dir* dir)
 
 ram_entry* get_next_file(ram_dir* dir, ram_entry* iter)
 {
+	if(iter == nullptr) return nullptr;
+	
 	// Calculate point to start
 	mem_addr i = ((mem_addr)iter - (mem_addr)&dir->block[0]) / sizeof(ram_entry);
 	

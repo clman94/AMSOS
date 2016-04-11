@@ -1,5 +1,5 @@
-#ifndef H_RAMFS
-#define H_RAMFS
+#ifndef RAMFS_H
+#define RAMFS_H
 
 #include <stdint.h>
 
@@ -22,7 +22,12 @@ Possible layout (this isn't final):
 |  /video
 |  |  /80X25
 |  /mm
-|  /paging
+|  /proc
+|  |  /0
+|  |  |  /reg
+|  |  |  /priority
+|  |  |  /
+|  |  /1
 /external
 |  /hd
 |  |  /0
@@ -45,7 +50,7 @@ enum RAM_FILE_TYPE
 	RAM_FILE_TYPE_DIRECTORY
 };
 
-const unsigned int RAM_FILE_NAME_LENGTH = 239;
+const unsigned int RAM_FILE_NAME_LENGTH = 32;
 
 struct ram_dir;
 struct ram_entry;
@@ -56,14 +61,16 @@ struct ram_entry
 	
 	char  name[RAM_FILE_NAME_LENGTH];
 	
-	//union{
+	union{
 		
 	// Region in which data is stored
 	// (start=0, end=1)
 	// Range is inclusive
 	mem_addr range[2];
-		
-	//};
+	
+	
+	
+	};
 	uint8_t  type;
 };
 
@@ -82,11 +89,20 @@ ram_dir*    create_dir(ram_dir* dir, const char* name);
 ram_dir*    find_dir(ram_dir* dir, const char* name);
 
 mem_addr    get_file_size(ram_entry* file);
-ram_entry*  create_file(ram_dir* dir, char* name, mem_addr size, int type);
-ram_entry* make_file(ram_dir* dir, const char* name, mem_addr start, mem_addr end, int type, bool force = false);
+ram_entry*  create_file(ram_dir* dir, const char* name, mem_addr size, int type = RAM_FILE_TYPE_FILE);
+ram_entry*  make_file(ram_dir* dir, const char* name, mem_addr start, mem_addr end, int type, bool force = false);
 ram_entry*  find_file(ram_dir* dir, const char* name);
 ram_entry*  get_first_file(ram_dir* dir);
 ram_entry*  get_next_file(ram_dir* dir, ram_entry* iter);
 ram_entry*  get_entry_path(ram_dir* dir, const char* path);
+
+static inline
+ram_dir*    get_dir_path(ram_dir* dir, const char* path)
+{
+	ram_entry* e = get_entry_path(dir, path);
+	if(e == nullptr)
+		return nullptr;
+	return (ram_dir*)(e->range[0]);
+}
 
 #endif
