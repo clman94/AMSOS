@@ -27,27 +27,8 @@ void PIC_remap(int off1, int off2);
 #define IRQ_ATA_PRIMARY         0xE
 #define IRQ_ATA_SECONDARY       0xF
 
-void IRQ_mask_all();
-void IRQ_unmask_all();
-void IRQ_unmask(uint8_t irq);
-
-// TO THINK ABOUT: Should the above be renamed to the below? seems cleaner...
-
-static inline void IRQ_disable_all()
-{
-	IRQ_mask_all();
-}
-
-static inline void IRQ_enable_all()
-{
-	IRQ_unmask_all();
-}
-
-static inline void IRQ_enable(uint8_t irq)
-{
-	IRQ_unmask(irq);
-}
-
-
+void IRQ_disable_all();
+void IRQ_enable_all();
+void IRQ_enable(uint8_t irq);
 
 #endif

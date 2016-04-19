@@ -81,9 +81,7 @@ int term_printc(char c)
 	{ 
 		term_x = 0;
 		if(++term_y == term_height)
-		{
 			term_y = 0;
-		}
 		return 1;
 	}else
 		term_set(term_x, term_y, c);
@@ -93,9 +91,7 @@ int term_printc(char c)
 	{
 		term_x = 0;
 		if(++term_y == term_height)
-		{
 			term_y = 0;
-		}
 	}
 	return 1;
 }

@@ -131,10 +131,16 @@ ram_entry* allocate_file(ram_dir* dir, mem_addr size)
 	return ef;
 }
 
-
 ram_entry* allocate_file_region(ram_dir* dir, mem_addr start, mem_addr end, bool force)
 {
-	if(force)
+	// Find file entry with the right amount of room
+	// At the moment, root has all the free space
+	ram_entry* nf = find_free_entry_region(dir->root, start, end);
+	
+	
+	// There's a chance that the forced new file will nip
+	// the edge of a used space (TODO)
+	if(force && !nf)
 	{
 		// Find file entry that is not being used
 		ram_entry* ef = find_unused_entry(dir);
@@ -149,12 +155,8 @@ ram_entry* allocate_file_region(ram_dir* dir, mem_addr start, mem_addr end, bool
 		return ef;
 	}
 	
-	// Find file entry with the right amount of room
-	// At the moment, root has all the free space
-	ram_entry* nf = find_free_entry_region(dir->root, start, end);
-	
 	// No free space available
-	if (nf == nullptr)
+	if (!nf)
 		return nullptr;
 	
 	ram_entry* ef = find_unused_entry(dir);
@@ -203,6 +205,25 @@ ram_entry* make_file(ram_dir* dir, const char* name, mem_addr start, mem_addr en
 	return nf;
 }
 
+ram_dir* delete_dir(ram_dir* dir, bool erase)
+{
+	ram_entry* e = get_first_file(dir);
+	while (e)
+	{
+		delete_file(e, erase);
+		e = get_next_file(dir, e);
+	}
+}
+
+ram_entry* delete_file(ram_entry* e, bool erase)
+{
+	if (e->type == RAM_FILE_TYPE_DIRECTORY)
+		delete_dir((ram_dir*)e->range[0], erase);
+	else
+		e->type = (erase ? RAM_FILE_TYPE_NONE : RAM_FILE_TYPE_FREE);
+	return e;
+}
+
 ram_dir* create_dir(ram_dir* dir, const char* name)
 {
 	// Create the file representing the directory
@@ -247,6 +268,12 @@ ram_entry* find_file(ram_dir* dir, const char* name)
 {
 	if(dir == nullptr)
 		return nullptr;
+	
+	if (!strcmp(":", name))
+		return dir->root->ref;
+	
+	if (!strcmp("..", name))
+		return dir->up->ref;
 	
 	for(mem_addr i = 0; i < RAM_FS_BLOCK_LENGTH; i++)
 	{
@@ -303,8 +330,14 @@ ram_entry* get_entry_path(ram_dir* dir, const char* path)
 			++cc;
 			
 			// Move to new dir
-			if (*cc == '/'){
-				dir = find_dir(dir, prt);
+			if (*cc == '/')
+			{
+				if (!strcmp(":", prt))
+					dir = find_dir(dir->root, prt);
+				else if (!strcmp("..", prt))
+					dir = find_dir(dir->root, prt);
+				else
+					dir = find_dir(dir, prt);
 				break;
 			}
 			

@@ -53,19 +53,19 @@ void PIC_remap(int off1, int off2)
 	port_out_b(PIC2_DATA, a2);
 }
 
-void IRQ_mask_all()
+void IRQ_disable_all()
 {
 	port_out_b(PIC1_DATA, 0xFF);
 	port_out_b(PIC2_DATA, 0xFF);
 }
 
-void IRQ_unmask_all()
+void IRQ_enable_all()
 {
 	port_out_b(PIC1_DATA, 0x00);
 	port_out_b(PIC2_DATA, 0x00);
 }
 
-void IRQ_unmask(uint8_t irq)
+void IRQ_enable(uint8_t irq)
 {
     uint16_t port;
     uint8_t value;
