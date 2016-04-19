@@ -16,6 +16,8 @@
 
 #include <amsos/library/io.h>
 
+#include <amsos/acpi/acpi.h>
+
 #define DEBUG(A) printf("[KERNEL] %s", A);
 
 static ram_dir* rootdir = nullptr;
@@ -102,6 +104,9 @@ void kern_setup()
 	
 	ram_dir* dir_proc = create_dir(dir_system, "proc");
 	
+	printf("%c", ACPI_init(dir_system) + '0');
+	
+
 	//sched_init(rootdir);
 	
 	debug_file_tree(rootdir);

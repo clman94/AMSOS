@@ -7,6 +7,8 @@
 #include <amsos/commandline.h>
 #include <amsos/ramfs.h>
 
+#include <amsos/acpi/acpi.h>
+
 #define DEBUG(A) printf("[KERNEL] %s", A);
 #define DEBUG_COMPLETE() printf("Complete\n");
 
@@ -52,15 +54,14 @@ ram_dir* get_root_dir();
 void list_dir_contents(ram_dir* d)
 {
 	ram_entry* e = get_first_file(d);
-	printf("T_NAME_\n");
 	while (e)
 	{
 		if (e->type == RAM_FILE_TYPE_DIRECTORY)
-			printf("/ %s\n", e->name);
+			printf("/%s\n", e->name);
 		else if (e->type == RAM_FILE_TYPE_FILE)
-			printf("  %s\n", e->name);
+			printf("%s\n", e->name);
 		else
-			printf("* %s\n", e->name);
+			printf("**%s\n", e->name);
 		e = get_next_file(d, e);
 	}
 }
@@ -98,7 +99,7 @@ void kern_main()
 			ram_dir* nd = get_dir_path(cd, input);
 			if (nd == nullptr)
 				printf("\nInvalid Path");
-			else 
+			else
 				cd = nd;
 			
 			printf("\n");
@@ -121,5 +122,8 @@ void kern_main()
 		
 		else if(!strcmp(input, "clr"))
 			term_clear();
+		
+		else if(!strcmp(input, "sd"))
+			ACPI_power_off();
 	}
 }

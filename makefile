@@ -36,4 +36,4 @@ obj/%.o: boot/%.asm $(OBJ_DIR)
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 	
--include $(OBJ_FILES:.o=.d) obj/boot.d
+-include $(OBJ_FILES:.o=.d)
