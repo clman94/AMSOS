@@ -1,129 +1,40 @@
-#include <amsos/drivers/keyboard.h>
-#include <amsos/drivers/serial.h>
+#include <amsos/kernel.hpp>
+#include <amsos/stack.hpp>
+#include <amsos/isr.hpp>
 
-#include <amsos/library/string.h>
-#include <amsos/library/io.h>
-#include <amsos/terminal.h>
-#include <amsos/commandline.h>
-#include <amsos/ramfs.h>
+static kern::kernel_core* global_core;
 
-#include <amsos/acpi/acpi.h>
-
-#define DEBUG(A) printf("[KERNEL] %s", A);
-#define DEBUG_COMPLETE() printf("Complete\n");
-
-int getchar()
+void
+kern::isr::set_isr(uint8_t irq, isr_t handler)
 {
-	uint8_t key = keyboard_get_ascii(true);
-	
-	if(key){
-		bool shift = keyboard_key_status(SCANCODE_LSHIFT) | 
-		             keyboard_key_status(SCANCODE_RSHIFT);
-		key = shift ? (key - 'a' + 'A') : key;
-	}
-	return key;
+	routines[irq] = handler;
 }
 
-// A basic input function
-void basic_input(char* str, int max = 256)
+void
+kern::isr::call(uint8_t irq)
 {
-	int i = 0;
-	int in = 0;
-	while (i < max)
-	{
-		in = getchar();
-		if (in == '\b') 
-		{
-			i -= (i>0?1:0);
-			printf("\b");
-			continue;
-		}
-		if (in <= 0) continue;
-		if (in == '\n') break;
-		str[i] = in;
-		printf("%c", in);
-		++i;
-	}
-	str[i] = '\0';
+	if (routines[irq])
+		routines[irq]();
 }
 
-// Temporary (from begin.cpp)
-ram_dir* get_root_dir();
-
-
-void list_dir_contents(ram_dir* d)
+void isr_test()
 {
-	ram_entry* e = get_first_file(d);
-	while (e)
-	{
-		if (e->type == RAM_FILE_TYPE_DIRECTORY)
-			printf("/%s\n", e->name);
-		else if (e->type == RAM_FILE_TYPE_FILE)
-			printf("%s\n", e->name);
-		else
-			printf("**%s\n", e->name);
-		e = get_next_file(d, e);
-	}
+	global_core->get_terminal().print("a");
 }
-
 
 extern "C"
 void kern_main()
 {
-	// divide by 0 test
-	// unsigned int pie = 1 - 1;
-	// pie = 12 / pie;
+	kern::kernel_core core;
+	global_core = &core;
+	core.initualize();
 	
-	keyboard_enable_buffer();
-	keyboard_enable_direct();
+	core.get_isr().set_isr(0, isr_test);
 	
-	char input[256] = { '\0', };
+	kern::stack stack;
+	stack.set_memory(0x01000000, 100);
 	
-	ram_dir* cd = get_root_dir();
-	
-	user_settings* user = nullptr;
-	
-	while(true)
-	{
-		if(user)
-			printf("[%C%s%C] %s>", 0x06, user->name, 0x07, (cd->ref ? cd->ref->name : "/"));
-		else
-			printf("[%CKERNEL%C] %s>", 0x04, 0x07, (cd->ref ? cd->ref->name : "/"));
-		
-		basic_input(input);
-		printf("\nExecuting : %s\n", input);
-		if(!strcmp(input, "cd"))
-		{
-			printf("Path : "); 
-			basic_input(input);
-			ram_dir* nd = get_dir_path(cd, input);
-			if (nd == nullptr)
-				printf("\nInvalid Path");
-			else
-				cd = nd;
-			
-			printf("\n");
-		}
-		
-		else if(!strcmp(input, "nu"))
-		{
-			ram_entry* userfile = create_file(get_root_dir(), "user", sizeof(user_settings));
-			
-			user = (user_settings*)userfile->range[0];
-			
-			printf("\nName : "); 
-			basic_input(user->name, 16);
-			
-			printf("\n");
-		}
-		
-		else if(!strcmp(input, "l"))
-			list_dir_contents(cd);
-		
-		else if(!strcmp(input, "clr"))
-			term_clear();
-		
-		else if(!strcmp(input, "sd"))
-			ACPI_power_off();
-	}
+	core.get_terminal().print("yay\n");
+	core.get_terminal().print("This OS works\n");
+	while(true){}
 }

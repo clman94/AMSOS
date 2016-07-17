@@ -76,23 +76,3 @@ extern IRQ_handler
 	
 	%assign i i+1
 %endrep
-
-;;; Had this idea to encapsulate the interrupt functions
-;;; Didn't work so well...
-
-;;; In idt.cpp   : extern "C" void __asm_register_interrupts(uint32_t func);
-;;; In IDTR_load : "__asm_register_interrupts((uint32_t)&IDT_register);"
-
-; global __asm_register_interrupts
-; __asm_register_interrupts:
-; %assign i 0
-; %rep 48
-	; mov eax, [esp+4]
-	; push dword 0
-	; push dword __asm_interrupt_%[i]
-	; push dword i
-	; call eax
-	
-	; %assign i i+1
-; %endrep
-	; ret

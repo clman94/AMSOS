@@ -32,7 +32,6 @@ mboot:
 section .text
 
 global _start
-extern kern_setup
 extern kern_main
 
 align 4
@@ -40,17 +39,6 @@ _start:
 
 	; Set stack
 	mov esp, stack_top
-	
-	; These 2 calls are ment to organize code, 
-	;   so things don't get messy when trying to 
-	;   seperate hardware handling from software handling.
-
-	; This function sets up interrupts, hardware, ect. 
-	; (Interrupts are disabled beforehand and 
-	;   re-enabled afterwords)
-	cli
-	call kern_setup
-	sti
 	
 	; This begins the main kernel (software stuff)
 	call kern_main
